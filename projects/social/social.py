@@ -1,5 +1,6 @@
 import random
 import math
+from util import Queue
 
 class User:
     def __init__(self, name):
@@ -48,13 +49,13 @@ class SocialGraph:
         self.lastID = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
+        
 
         for i in range(0, numUsers):
             self.addUser(f'Brian{i}')
         
         possibleFriendships = []
-        for UserID in self.users:
+        for userID in self.users:
             for friendID in range(userID + 1, self.lastID + 1):
                 possibleFriendships.append([userID, friendID])
 
@@ -76,9 +77,59 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+
+        
+        def bfs(starting_vertex, destination_vertex, graph):
+            """
+            Return a list containing the shortest path from
+            starting_vertex to destination_vertex in
+            breath-first order.
+            """
+    
+            q = Queue()
+            
+            q.enqueue([starting_vertex])
+    
+            found = []
+            
+            while q.size() > 0:
+                path = q.dequeue()
+                v = path[-1]
+    
+                if v not in found:
+                    if v == destination_vertex:
+                        return path
+                    found.append(v)
+                    for next_vert in graph[v]:
+                        new_path = list(path)
+                        new_path.append(next_vert)
+                        q.enqueue(new_path)
+                        
+            return None
+
+        for user in self.users:
+            visited[user] = bfs(userID, user, self.friendships)
+
         return visited
 
+
+        # visited = {}
+
+        # q = Queue()
+        # q.enqueue([userID])
+
+        # while q.size() > 0:
+        #     path = q.dequeue()
+        #     newUserID = path[-1]
+        #     if newUserID not in visited:
+        #         visited[newUserID] = path
+        #         for friendID in self.friendships[newUserID]:
+        #             if friendID not in visited:
+        #                 new_path = list(path)
+        #                 new_path.append(friendID)
+        #                 q.enqueue(new_path)
+        
+        # return visited
 
 if __name__ == '__main__':
     sg = SocialGraph()
