@@ -20,7 +20,7 @@ def earliest_ancestor(ancestors, starting_node):
         # sets the first element of the tuple as the value of each key in the graph
         graph[i[1]].add(i[0])
 
-    # print(graph)
+    print(graph)
 
     # THIS IS THE OPPOSITE OF WHAT'S ABOVE AND THE NORMAL WAY TO PUT SHIT IN A GRAPH
     # for i in ancestors:
@@ -35,22 +35,36 @@ def earliest_ancestor(ancestors, starting_node):
    
     q = Queue()
     q.enqueue([starting_node])
+
+    longest_path = 1
+    #base case for if we don't have any children
+    ancestor = -1
     
     while q.size() > 0:
         path = q.dequeue()
-        print("first path", path)
         newChildID = path[-1]
+        if len(path) > longest_path:
+            #set the length of the path
+            longest_path = len(path)
+            ancestor = newChildID
+        if len(path) == longest_path:
+            if newChildID < ancestor:
+                ancestor = newChildID
         if newChildID not in visited:
             visited[newChildID] = path
-            print("path", path)
-            print("newChildID", newChildID)
+            # print("path", path)
+            # print("newChildID", newChildID)
             # print("graphNewChild", graph[newChildID])
-            for childID in graph[newChildID]:
-                if childID not in visited:
-                    new_path = list(path)
-                    new_path.append(childID)
-                    q.enqueue(new_path)
-                    
-    return visited
+            if newChildID in graph:
+                for childID in graph[newChildID]:
 
-earliest_ancestor([(1, 3), (2, 3), (3, 6), (5, 6), (5, 7), (4, 5), (4, 8), (8, 9), (11, 8), (10, 1)], 6)
+                    if childID not in visited:
+
+                        new_path = list(path)
+                        new_path.append(childID)
+                        q.enqueue(new_path)
+
+
+    return ancestor
+
+print(earliest_ancestor([(1, 3), (2, 3), (3, 6), (5, 6), (5, 7), (4, 5), (4, 8), (8, 9), (11, 8), (10, 1)], 8))

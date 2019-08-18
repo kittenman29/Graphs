@@ -21,8 +21,93 @@ world.printRooms()
 
 player = Player("Name", world.startingRoom)
 
+class Queue():
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+
 # Fill this out
 traversalPath = []
+
+
+# this is where you start
+room_id = player.currentRoom.id
+direction_graph = {}
+# apparently we're supposed to be doing some question mark thing
+direction_graph[room_id] = {i : '?' for i in player.currentRoom.getExits()}
+unexplored = None
+
+exploring = True
+while exploring:
+    # print(current_room)
+    # print(direction_graph[room[id]])
+    current_room = direction_graph[room_id]
+
+    for direction in current_room:
+        if current_room[direction] == '?': 
+            #put the path that your traveled into the traversalPath array
+            #print("working?", player.travel(direction))
+            player.travel(direction)
+            traversalPath.append(f'{direction}')
+            #pass if the room is already in the traversalPath
+            if player.currentRoom.id in direction_graph: 
+                pass
+
+            else: 
+                #stack overflowwwwwwww this was cool, didn't know you could do this
+                direction_graph[player.currentRoom.id] = {i : '?' for i in player.currentRoom.getExits()}
+                # print(direction_graph[player.currentRoom.id])
+                #print(player.currentRoom.getExits())
+
+            direction_graph[room_id][direction] = player.currentRoom.id # Set previous rooms direction (that we are from it) to the id of the current room
+            # 4 If statements, they basically say the same thing
+
+            if direction == 'n':
+                direction_graph[player.currentRoom.id]['s'] = room_id 
+                room_id = player.currentRoom.id
+                break
+            elif direction == 'w':
+                direction_graph[player.currentRoom.id]['e'] = room_id
+                room_id = player.currentRoom.id
+                break
+            elif direction == 'e':
+                direction_graph[player.currentRoom.id]['w'] = room_id
+                room_id = player.currentRoom.id
+                break
+            elif direction == 's':
+                direction_graph[player.currentRoom.id]['n'] = room_id
+                room_id = player.currentRoom.id
+                break
+#BFS, don't really know where this goes   
+# if unexplored == True:
+#     visited = set()
+#     q = Queue()
+#     q.enqueue([player.currentRoom.id])
+
+#     while q.size() > 0:
+#         path = q.dequeue()
+#         v = path[-1]
+
+#         if '?' in direction_graph[v].values():
+#             break
+
+#         if v not in visited:
+#             visited.add(v)
+
+#             for neighbor in direction_graph[v]:
+#                 if direction_graph[v][neighbor] not in visited:
+#                     path_copy = path.copy()
+#                     path_copy.append(direction_graph[v][neighbor])
+#                     q.enqueue(path_copy)
+        
 
 
 
@@ -43,9 +128,9 @@ else:
 
 
 
-#######
+#####
 # UNCOMMENT TO WALK AROUND
-#######
+#####
 # player.currentRoom.printRoomDescription(player)
 # while True:
 #     cmds = input("-> ").lower().split(" ")
